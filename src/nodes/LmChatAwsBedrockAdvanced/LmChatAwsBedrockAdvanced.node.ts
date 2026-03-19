@@ -246,15 +246,15 @@ export class LmChatAwsBedrockAdvanced implements INodeType {
 						default: '5m',
 						description: 'How long the prompt cache should be kept alive',
 					},
+					{
+						displayName: 'Enable Debug Logs',
+						name: 'enableDebugLogs',
+						default: false,
+						description:
+							'Whether to log detailed debug information (messages, responses, cache metrics) during execution',
+						type: 'boolean',
+					},
 				],
-			},
-			{
-				displayName: 'Enable Debug Logs',
-				name: 'enableDebugLogs',
-				default: false,
-				description:
-					'Whether to log detailed debug information (messages, responses, cache metrics) during execution',
-				type: 'boolean',
 			},
 		],
 	};
@@ -325,6 +325,9 @@ export class LmChatAwsBedrockAdvanced implements INodeType {
 
 			async *_streamResponseChunks(messages: any[], generateOptions: any, runManager?: any) {
 				const modifiedMessages = this.injectCachePoints(messages);
+				if (options.enableDebugLogs) {
+					logger.info('[BedrockAdvanced] [stream] modifiedMessages: ' + JSON.stringify(modifiedMessages));
+				}
 				const stream = super._streamResponseChunks(modifiedMessages, generateOptions, runManager);
 
 				for await (const chunk of stream) {
@@ -333,6 +336,9 @@ export class LmChatAwsBedrockAdvanced implements INodeType {
 						const cacheRead = rawUsage.cacheReadInputTokens || 0;
 						const cacheWrite = rawUsage.cacheWriteInputTokens || 0;
 						chunk.message.response_metadata.promptCachingMetrics = this.formatCacheMetrics(cacheRead, cacheWrite);
+						if (options.enableDebugLogs) {
+							logger.info('[BedrockAdvanced] [stream] promptCachingMetrics: ' + JSON.stringify(chunk.message.response_metadata.promptCachingMetrics));
+						}
 					}
 					yield chunk;
 				}
