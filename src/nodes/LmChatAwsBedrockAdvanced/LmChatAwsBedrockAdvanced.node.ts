@@ -248,6 +248,14 @@ export class LmChatAwsBedrockAdvanced implements INodeType {
 					},
 				],
 			},
+			{
+				displayName: 'Enable Debug Logs',
+				name: 'enableDebugLogs',
+				default: false,
+				description:
+					'Whether to log detailed debug information (messages, responses, cache metrics) during execution',
+				type: 'boolean',
+			},
 		],
 	};
 
@@ -265,6 +273,7 @@ export class LmChatAwsBedrockAdvanced implements INodeType {
 			maxTokensToSample?: number;
 			enablePromptCaching?: boolean;
 			cacheTtl?: string;
+			enableDebugLogs?: boolean;
 		};
 
 		const proxyAgent = getNodeProxyAgent();
@@ -292,8 +301,10 @@ export class LmChatAwsBedrockAdvanced implements INodeType {
 			async _generate(messages: any[], generateOptions: any, runManager?: any) {
 				const modifiedMessages = this.injectCachePoints(messages);
 				const response = await super._generate(modifiedMessages, generateOptions, runManager);
-				//logger.info('[BedrockAdvanced] modifiedMessages: ' + JSON.stringify(modifiedMessages));
-				//logger.info('[BedrockAdvanced] response: ' + JSON.stringify(response));
+				if (options.enableDebugLogs) {
+					logger.info('[BedrockAdvanced] modifiedMessages: ' + JSON.stringify(modifiedMessages));
+					logger.info('[BedrockAdvanced] response: ' + JSON.stringify(response));
+				}
 				const rawUsage = response.llmOutput?.usage
 					|| response.generations[0]?.message?.response_metadata?.usage
 					|| {};
@@ -304,7 +315,9 @@ export class LmChatAwsBedrockAdvanced implements INodeType {
 					const msg = response.generations[0].message;
 					if (!msg.response_metadata) msg.response_metadata = {};
 					msg.response_metadata.promptCachingMetrics = this.formatCacheMetrics(cacheRead, cacheWrite);
-					//logger.info('[BedrockAdvanced] promptCachingMetrics: ' + JSON.stringify(msg.response_metadata.promptCachingMetrics));
+					if (options.enableDebugLogs) {
+						logger.info('[BedrockAdvanced] promptCachingMetrics: ' + JSON.stringify(msg.response_metadata.promptCachingMetrics));
+					}
 				}
 
 				return response;
