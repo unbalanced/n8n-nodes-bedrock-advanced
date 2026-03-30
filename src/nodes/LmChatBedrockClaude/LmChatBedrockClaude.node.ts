@@ -184,7 +184,7 @@ export class LmChatBedrockClaude implements INodeType {
 						name: 'cacheTools',
 						type: 'boolean',
 						default: false,
-						description: 'Whether to add cache_control to tool definitions. Useful when many or large tools are defined. Not compatible with Tool Search (defer_loading conflicts with cache_control).',
+						description: 'Whether to add cache_control to the last non-deferred tool definition. Compatible with Tool Search — cache_control is placed on built-in tools only; deferred agent tools are excluded from the cache prefix automatically.',
 						displayOptions: {
 							show: {
 								enableCaching: [true],
