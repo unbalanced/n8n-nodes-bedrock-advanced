@@ -3,6 +3,7 @@ const { cpSync } = require('fs');
 
 const entryPoints = [
 	'src/nodes/LmChatAwsBedrockAdvanced/LmChatAwsBedrockAdvanced.node.ts',
+	'src/nodes/LmChatBedrockClaude/LmChatBedrockClaude.node.ts',
 	'src/index.ts',
 ];
 
@@ -20,10 +21,14 @@ esbuild.buildSync({
 	external: ['n8n-workflow'],
 });
 
-// Copy the SVG icon
+// Copy SVG icons
 cpSync(
 	'src/nodes/LmChatAwsBedrockAdvanced/bedrock.svg',
 	'dist/nodes/LmChatAwsBedrockAdvanced/bedrock.svg',
+);
+cpSync(
+	'src/nodes/LmChatBedrockClaude/bedrock-claude.svg',
+	'dist/nodes/LmChatBedrockClaude/bedrock-claude.svg',
 );
 
 console.log('Build complete');
