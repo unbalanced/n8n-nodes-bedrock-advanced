@@ -2,3 +2,4 @@ node_modules
 dist
 cache-test.ts
 bedrock-claude-test.ts
+test/
