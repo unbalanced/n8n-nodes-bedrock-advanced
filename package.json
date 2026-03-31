@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-bedrock-advanced",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "n8n community node for AWS Bedrock Chat Model with prompt caching support",
   "keywords": [
     "n8n-community-node-package",
@@ -24,7 +24,7 @@
     "dev": "tsc --watch",
     "prepublishOnly": "npm run build",
     "lint": "tsc --noEmit",
-    "test:cache-1h": "ts-node --project test/tsconfig.json test/cache-1h.integration.ts"
+    "test:cache-1h": "ts-node --project test/tsconfig.json --transpile-only test/cache-1h.integration.ts"
   },
   "files": [
     "dist",
